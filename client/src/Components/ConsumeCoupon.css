@@ -1,0 +1,40 @@
+.consume-container {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.consume-container h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.consume-container input {
+  width: 80%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.consume-container button {
+  padding: 10px 20px;
+  background-color: #1d72b8;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.consume-container button:hover {
+  background-color: #155d8b;
+}
+
+.message {
+  margin-top: 15px;
+  font-weight: bold;
+}
