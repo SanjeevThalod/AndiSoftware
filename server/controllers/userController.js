@@ -45,8 +45,8 @@ const updateUserProfile = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({ role: "user" }).select("-password");
-    res.json(users);
+    const users = await User.find({ role: "user", status:"pending" }).select("-password");
+    res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -61,7 +61,7 @@ const approveUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.status = req.body.status || "approved"; // Allow flexibility with status
+    user.status = req.body.status || "approved"; 
     await user.save();
     res.json({ message: "User status updated successfully" });
   } catch (error) {
@@ -114,27 +114,13 @@ const rejectUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Set status to rejected and add optional rejection reason
-    user.status = 'rejected';
-    if (req.body.reason) {
-      user.rejectionReason = req.body.reason;
-    }
+    await User.findByIdAndDelete(userId);
 
-    await user.save();
-    
-    res.json({ 
-      message: "User rejected successfully",
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        status: user.status,
-        rejectionReason: user.rejectionReason
-      }
-    });
+    res.json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 export { getUserProfile, updateUserProfile, getAllUsers, approveUser, redeemCoupon,rejectUser };

@@ -13,11 +13,11 @@ const generateToken = (userId, role) => {
 const checkAdmin = (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
-
+    console.log(token)
     if (!token) {
       return res
         .status(401)
-        .json({ success: false, message: "Access denied, no token provided" });
+        .json({ success: false, token:token,message: "Access denied, no token provided" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

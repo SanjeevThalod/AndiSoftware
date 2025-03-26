@@ -2,9 +2,12 @@ import React from 'react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
+import { login as loginAction } from '../Redux/AuthSlice.js';
 import './Register.css';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = ()=> {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -21,16 +24,17 @@ export const Login = ()=> {
         alert("Password should be atleast 6 characters.");
         return;
       }
-      const login = await axios.post("http://localhost:5000/login", {
+      const register = await axios.post("http://localhost:5000/api/auth/login", {
         email,
         password
        });
 
-       dispatch({
-         type: "LOGIN",
-         payload: login.data
-       });
-
+       dispatch(loginAction({
+        token: register.data.token,
+        user: register.data.user
+      }));
+       console.log(register.data)
+      navigate('/');
     } catch (error) {
       alert("Invalid credentials");
       console.log(error);

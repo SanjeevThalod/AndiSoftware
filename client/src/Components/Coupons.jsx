@@ -2,35 +2,32 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Coupons.css';
 import { FaPlusCircle } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
 const Coupons = () => {
-  const [coupons, setCoupons] = useState([
-    { name: "Summer Sale", code: "A1b@C3d#E4", quantity: 100 },
-    { name: "Winter Blast", code: "Xy9%Qw8@Zp", quantity: 50 },
-    { name: "Festive50", code: "Fg4$Kl7^Mn", quantity: 200 },
-    { name: "MonsoonMagic", code: "J8k&Op1@Zx", quantity: 80 },
-    { name: "SuperSaver", code: "Rt5@Vb7#Lm", quantity: 150 },
-    { name: "NewYear2025", code: "Yh3^Bn6$Tf", quantity: 70 },
-    { name: "DiwaliDhamaka", code: "Ui8%Gh2@Kr", quantity: 120 },
-    { name: "MegaDeal", code: "Qw5@Er7#Ty", quantity: 90 },
-    { name: "FlashSale", code: "Lo6&Pk4@Mb", quantity: 60 },
-    { name: "HolidayBonanza", code: "Zp9^Xc3$Lv", quantity: 110 }
-  ]);
+  const {isAuthenticated, user, token} = useSelector((state) => state.auth);
+  const [coupons, setCoupons] = useState([]);
   const [couponData, setCouponData] = useState({
     name: '',
     quantity: '',
+    expiry: ''
   });
 
   // Fetch existing coupons
-  const fetchCoupons = () => {
-    axios.get('http://localhost:5000/admin/coupons')
-      .then(res => setCoupons(res.data))
-      .catch(err => console.error(err));
+  const fetchCoupons = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/api/coupon', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setCoupons(res.data);
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   useEffect(() => {
     fetchCoupons();
-  }, []);
+  }, [token]);
 
   // Random 10-character coupon code generator
   const generateCode = () => {
@@ -43,22 +40,27 @@ const Coupons = () => {
   };
 
   // Create new coupon
-  const handleCreateCoupon = () => {
-    if (!couponData.name || !couponData.quantity) {
+  const handleCreateCoupon = async () => {
+    console.log(couponData)
+    if (!couponData.name || !couponData.quantity || !couponData.expiry) {
       alert('Please fill all fields');
       return;
     }
     const newCoupon = {
       name: couponData.name,
-      quantity: couponData.quantity,
+      Quantity: couponData.quantity,
+      endDate: couponData.expiry,
       code: generateCode()
     };
-    axios.post('http://localhost:5000/admin/create-coupon', newCoupon)
-      .then(() => {
-        fetchCoupons();
-        setCouponData({ name: '', quantity: '' });
-      })
-      .catch(err => console.error(err));
+    try {
+      const res = await axios.post('http://localhost:5000/api/coupon', newCoupon, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchCoupons();
+      setCouponData({ name: '', quantity: '', expiry: '' });
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
@@ -79,6 +81,12 @@ const Coupons = () => {
           value={couponData.quantity}
           onChange={(e) => setCouponData({ ...couponData, quantity: e.target.value })}
         />
+        <input
+          type="number"
+          placeholder="Expiry"
+          value={couponData.expiry}
+          onChange={(e) => setCouponData({ ...couponData, expiry: e.target.value })}
+        />
         <button className="create-btn" onClick={handleCreateCoupon}>
           <FaPlusCircle /> Create
         </button>
@@ -93,7 +101,7 @@ const Coupons = () => {
             <div className="coupon-card" key={coupon._id}>
               <p><strong>Name:</strong> {coupon.name}</p>
               <p><strong>Code:</strong> {coupon.code}</p>
-              <p><strong>Quantity:</strong> {coupon.quantity}</p>
+              <p><strong>Quantity:</strong> {coupon.Quantity}</p>
             </div>
           ))
         )}

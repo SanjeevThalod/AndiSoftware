@@ -6,15 +6,16 @@ import Home from './Pages/Home.jsx'
 import { Login } from './Auth/Login.jsx';
 
 function App() {
-  const { isAuthenticated } = useSelector((state) => state.auth);  
+  const { isAuthenticated, user } = useSelector((state) => state.auth); 
+
   return (
     <>
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path='/admin' element={isAuthenticated ? <AdminDashboard/> : <Register/>} />
-          <Route path='/register' element={<Register/>} />
-          <Route path='/login' element={<Login/>} />
+          <Route path='/admin' element={user && user.role == "admin" ? <AdminDashboard/> : <Home/>} />
+          <Route path='/register' element={isAuthenticated ? <Home/> : <Register/>} />
+          <Route path='/login' element={isAuthenticated ? <Home/> : <Login/>} />
         </Routes>
       </Router>
     </>

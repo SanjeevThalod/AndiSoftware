@@ -1,0 +1,6 @@
+http://localhost:5000/api/auth/register
+http://localhost:5000/api/auth/login
+http://localhost:5000/api/user/67e3f636d5cb154175d83e52/accept
+http://localhost:5000/api/user/67e3f636d5cb154175d83e52/reject
+http://localhost:5000/api/coupon
+http://localhost:5000/api/coupon/redeem

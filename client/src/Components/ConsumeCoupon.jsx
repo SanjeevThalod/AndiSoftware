@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import './ConsumeCoupon.css';
 import { FaTicketAlt } from 'react-icons/fa';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const ConsumeCoupon = () => {
+  const {isAuthenticated, user, token} = useSelector((state) => state.auth);
   const [couponCode, setCouponCode] = useState('');
   const [message, setMessage] = useState('');
 
@@ -15,11 +17,18 @@ const ConsumeCoupon = () => {
 
     try {
       // Example API call (replace with your real API)
-      const res = await axios.post('http://localhost:5000/user/consume-coupon', { code: couponCode });
-      
+      const res = await axios.post('http://localhost:5000/api/coupon/redeem', { code: couponCode },{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res);
       if (res.data.success) {
-        setMessage(`✅ Coupon applied! Offer: ${res.data.offer}`);
-      } else {
+        setMessage(`✅ Coupon applied! Offer: ${res.data.coupon.name}`);
+      }else if(res.data.exhausted){
+        setMessage('❌ Coupon has already been redeemed by you');
+      }
+       else {
         setMessage('❌ Invalid or expired coupon');
       }
     } catch (error) {

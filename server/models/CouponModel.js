@@ -23,6 +23,12 @@ const couponSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  usedBy:[
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    }
+  ]
 });
 
 
